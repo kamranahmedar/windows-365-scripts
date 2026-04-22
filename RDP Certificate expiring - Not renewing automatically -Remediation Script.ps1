@@ -47,21 +47,20 @@ try {
 
     $thumbprint = $cert.Thumbprint
 
+    # Bind certificate to RDP service
+    Write-Output "Binding certificate to RDP listener..."
+    $ts = Get-WmiObject -Namespace 'root\cimv2\TerminalServices' `
+    -Class Win32_TSGeneralSetting `
+    -Filter "TerminalName='RDP-tcp'"
+ 
+    $ts.SSLCertificateSHA1Hash = $thumbprint
+    $ts.Put() | Out-Null # only works if cert is in Personal Store 
+
     $cert | Remove-Item
 
-    Write-Output "Certificate created successfully"
+    Write-Output "Certificate created successfully and binded - cert deleted from personal store, copy made to remote desktop store"
 
-    Write-Output "Thumbprint: $thumbprint"
-
-    # Bind certificate to RDP service
-
-    Write-Output "Binding certificate to RDP listener..."
-
-    wmic /namespace:\\root\cimv2\TerminalServices `
-
-        PATH Win32_TSGeneralSetting `
-
-        Set SSLCertificateSHA1Hash="$thumbprint" | Out-Null
+    Write-Output "Thumbprint: $thumbprint"  
 
     # Restart RDP service to force reload
 
@@ -80,7 +79,5 @@ catch {
     exit 1
 
 }
- 
-9:57 AM Meeting ended: 2h 24m 17s 
 
  
