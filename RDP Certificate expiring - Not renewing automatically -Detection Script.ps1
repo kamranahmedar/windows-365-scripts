@@ -4,6 +4,7 @@
 # Checks LocalMachine\Remote Desktop store for any cert not expired
 # Exit 0 = OK (no remediation)
 # Exit 1 = Missing/expired (run remediation)
+# work item - what if multiple RDP certs exists in cert store - account for it and test it. 
 # ==============================
 $ErrorActionPreference = "Stop"
 try {
